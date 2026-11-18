@@ -31,12 +31,21 @@ export class Hud {
     ctx.fillStyle = '#2ecc71';
     ctx.font = 'bold 15px system-ui, sans-serif';
     ctx.fillText('$' + player.cash.toLocaleString('en-US'), 24, 70);
-    if (player.inCar) {
-      ctx.fillStyle = '#74b9ff';
-      ctx.font = '13px system-ui, sans-serif';
-      ctx.fillText(player.car.model.name + '  •  ' + Math.round(Math.abs(player.car.speed) * 0.12) + ' mph', 180, 70);
-    }
     ctx.restore();
+    // Car chip below the health box while driving.
+    if (player.inCar) {
+      ctx.save();
+      const label = player.car.model.name + '  •  ' + Math.round(Math.abs(player.car.speed) * 0.12) + ' mph';
+      ctx.font = '13px system-ui, sans-serif';
+      const lw = ctx.measureText(label).width + 24;
+      ctx.fillStyle = 'rgba(0,0,0,0.45)';
+      roundRect(ctx, 12, 82, lw, 28, 8);
+      ctx.fill();
+      ctx.fillStyle = '#74b9ff';
+      ctx.textAlign = 'left';
+      ctx.fillText(label, 24, 101);
+      ctx.restore();
+    }
 
     // --- Top-right: wanted stars.
     const wanted = world.police.wanted;

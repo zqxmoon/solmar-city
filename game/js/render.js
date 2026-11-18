@@ -27,9 +27,9 @@ export class Renderer {
 
     this.drawGround(ctx, vx0, vy0, vx1, vy1);
     this.drawRoads(ctx, vx0, vy0, vx1, vy1);
+    this.drawBeach(ctx, vx0, vy0, vx1, vy1);
     this.drawParks(ctx, vx0, vy0, vx1, vy1);
     this.drawBuildings(ctx, vx0, vy0, vx1, vy1);
-    this.drawBeach(ctx, vx0, vy0, vx1, vy1);
     this.drawCash(ctx, vx0, vy0, vx1, vy1);
     this.drawMissionMarker(ctx);
     this.drawCars(ctx, vx0, vy0, vx1, vy1);

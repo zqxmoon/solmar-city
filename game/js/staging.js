@@ -4,6 +4,25 @@
 // passes ?shot=, so this changes nothing for players.
 
 import { distance } from './util.js';
+import { Car, CAR_MODELS, CAR_COLORS } from './vehicles.js';
+
+// Drop a few traffic cars on the same road near a point, so a staged
+// driving shot shows a busy street instead of an empty one.
+function stageTrafficNear(world, x, y, angle, count) {
+  for (let i = 0; i < count; i++) {
+    const ahead = 260 + i * 170;
+    const lane = (i % 2 === 0 ? -24 : 24);
+    const cx = x + Math.cos(angle) * ahead - Math.sin(angle) * lane;
+    const cy = y + Math.sin(angle) * ahead + Math.cos(angle) * lane;
+    const model = CAR_MODELS[i % CAR_MODELS.length];
+    const color = CAR_COLORS[(i * 3 + 1) % CAR_COLORS.length];
+    const car = new Car(cx, cy, angle, model, color, { traffic: true });
+    car.driver = 'traffic';
+    car.speed = 120 + i * 12;
+    world.traffic.cars.push(car);
+    world.traffic.pickRoute(car);
+  }
+}
 
 // Each scene sets up the world, then returns true when the game should
 // start already playing (no title screen) for that shot.
@@ -38,6 +57,7 @@ export function applyShotScene(world, scene) {
     car.y = 500;
     car.angle = Math.PI / 2;
     car.speed = 300;
+    stageTrafficNear(world, 850, 500, Math.PI / 2, 4);
     world.traffic.spawnTraffic(8);
     world.peds.spawnNear(p.x, p.y, 8);
     return true;
@@ -48,7 +68,7 @@ export function applyShotScene(world, scene) {
     // and a mission objective on the HUD.
     const car = world.traffic.cars.find((c) => c.parked) || world.traffic.cars[0];
     world.enterCar(car, true);
-    car.x = 1950;
+    car.x = 2100;
     car.y = 1200;
     car.angle = Math.PI;
     car.speed = 380;
@@ -62,6 +82,7 @@ export function applyShotScene(world, scene) {
       cop.speed = 380;
     });
     world.traffic.spawnTraffic(8);
+    stageTrafficNear(world, car.x, car.y, Math.PI, 3);
     world.peds.spawnNear(p.x, p.y, 8);
     world.missions.index = 0;
     world.missions.active = true;

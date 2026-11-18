@@ -42,13 +42,18 @@ export function buildCity(seed) {
     for (let bj = 0; bj < ys.length - 1; bj++) {
       const bx = xs[bi] + (bi === 0 ? 40 : ROAD_W / 2 + 14);
       const by = ys[bj] + (bj === 0 ? 40 : ROAD_W / 2 + 14);
-      const bw = xs[bi + 1] - (bi === xs.length - 2 ? 40 : ROAD_W / 2 + 14) - bx;
+      let bw = xs[bi + 1] - (bi === xs.length - 2 ? 40 : ROAD_W / 2 + 14) - bx;
       const bh = ys[bj + 1] - (bj === ys.length - 2 ? 40 : ROAD_W / 2 + 14) - by;
       if (bw < 120 || bh < 120) continue;
       blockId++;
 
       // The eastern strip is the beach, not a city block.
       if (bx > 3250) continue;
+      // Keep the last city block clear of the sand.
+      const blockRight = Math.min(bx + bw, 3300);
+      const blockW = blockRight - bx;
+      if (blockW < 120) continue;
+      bw = blockW;
 
       const roll = rng();
       if (roll < 0.14) {
@@ -121,6 +126,15 @@ export function buildCity(seed) {
   cashPlaces.forEach((p, i) => {
     cashSpots.push({ id: 'cash' + i, x: p.x, y: p.y, taken: false, amount: 50 });
   });
+  // Never leave a cash bundle inside a building where nobody can reach it.
+  for (const spot of cashSpots) {
+    for (const box of colliders) {
+      if (spot.x > box.x && spot.x < box.x + box.w && spot.y > box.y && spot.y < box.y + box.h) {
+        spot.x = box.x - 24;
+        spot.y = box.y + box.h / 2;
+      }
+    }
+  }
   // A few on the beach.
   for (let i = 0; i < 4; i++) {
     cashSpots.push({
@@ -139,7 +153,7 @@ export function buildCity(seed) {
         parkedSpots.push({
           x: avenue + (rng() < 0.5 ? -ROAD_W / 2 + 16 : ROAD_W / 2 - 16),
           y: street + range(rng, -160, 160),
-          angle: rng() < 0.5 ? 0 : Math.PI,
+          angle: rng() < 0.5 ? Math.PI / 2 : -Math.PI / 2, // parallel to the avenue
           vertical: true,
         });
       }

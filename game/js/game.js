@@ -239,7 +239,7 @@ export class Game {
     if (!player.inCar) {
       const car = this.traffic.nearestStealable(player.x, player.y, 70);
       const marker = this.missions.startMarker();
-      const nearMarker = marker && distance(player.x, player.y, marker.x, marker.y) < 90;
+      const nearMarker = marker && distance(player.x, player.y, marker.x, marker.y) < 120;
       if (car) {
         this.prompt = 'Press E to steal the ' + car.model.name;
         if (input.justPressed('e')) this.enterCar(car, false);

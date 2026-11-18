@@ -81,7 +81,7 @@ export class MissionManager {
     const marker = this.startMarker();
     if (!marker) return false;
     const p = this.world.player;
-    if (distance(p.x, p.y, marker.x, marker.y) > 90) return false;
+    if (distance(p.x, p.y, marker.x, marker.y) > 110) return false;
     this.active = true;
     this.stage = 0;
     this.rivalsSpawned = false;
@@ -130,6 +130,7 @@ export class MissionManager {
       this.finished.push(m.id);
       this.active = false;
       this.index++;
+      this.stage = 0;
       if (this.index >= MISSION_DEFS.length) {
         this.storyDone = true;
         this.world.message('STORY COMPLETE — Solmar City is yours, Dana.', '#f1c40f');
